@@ -9,7 +9,7 @@ public class DominoServer implements GameServer {
 
     private GameStatus status;
     private PlayerList players;
-    
+        
     public DominoServer() {
         status = GameStatus.STARTED;
         players = new PlayerList();
