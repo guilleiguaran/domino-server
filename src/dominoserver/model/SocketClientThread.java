@@ -11,103 +11,100 @@ import java.util.ArrayList;
 
 public class SocketClientThread extends Thread implements ObservableSocket {
 
-    boolean is_ocupated_ = true;
-    final Object mutex_ = new Object();
-    final Object call_me_when_ready_the_run_ = new Object();
-    Socket current_socket_;
-    PrintWriter output_stream_;
-    BufferedReader input_stream_;
-    boolean is_enabled_ = true;
-    boolean is_reading_ = true;
-    boolean waiting_ = false;
-    boolean is_first_wake_up_ = true;
+    private final Object mutex = new Object();
+    private final Object call_me_when_ready_the_run = new Object();
+    private Socket current_socket;
+    private PrintWriter output_stream;
+    private BufferedReader input_stream;
+    private boolean is_enabled = true;
+    private boolean is_reading = true;
+    private boolean waiting = false;
     private ArrayList<SocketObserver> observers;
 
     public SocketClientThread() {
         observers = new ArrayList<>();
     }
 
-    public void AssignSocket(Socket current_socket) {
+    public void assignSocket(Socket current_socket) {
         try {
-            this.current_socket_ = current_socket;
-            ExtractStreamsFromSocket();
+            this.current_socket = current_socket;
+            extractStreamsFromSocket();
             this.start();
-        } catch (Exception err) {
+        } catch (Exception ex) {
         }
     }
 
-    public void ExtractStreamsFromSocket() {
+    public void extractStreamsFromSocket() {
         try {
-            this.output_stream_ = new PrintWriter(new OutputStreamWriter(current_socket_.getOutputStream()), true);
-            this.input_stream_ = new BufferedReader(new InputStreamReader(current_socket_.getInputStream()));
-
-        } catch (Exception err) {
+            this.output_stream = new PrintWriter(new OutputStreamWriter(current_socket.getOutputStream()), true);
+            this.input_stream = new BufferedReader(new InputStreamReader(current_socket.getInputStream()));
+        } catch (Exception ex) {
         }
     }
 
     @Override
     public void run() {
-        while (this.is_enabled_) {
-            this.StartReadingProcess();
+        while (this.is_enabled) {
+            this.startReadingProcess();
         }
     }
 
-    public void MakeThisThreadWait() {
+    public void makeThisThreadWait() {
         try {
-            synchronized (mutex_) {
-                waiting_ = true;
-                this.mutex_.wait();
-                waiting_ = false;
+            synchronized (mutex) {
+                waiting = true;
+                this.mutex.wait();
+                waiting = false;
             }
-        } catch (Exception err) {
+        } catch (Exception ex) {
         }
     }
 
-    public void MakeThisThreadWakeUp() {
+    public boolean isWaiting() {
+        return waiting;
+    }
+        
+    public void makeThisThreadWakeUp() {
         try {
-            synchronized (mutex_) {
-                this.mutex_.notify();
+            synchronized (mutex) {
+                this.mutex.notify();
             }
-        } catch (Exception err) {
+        } catch (Exception ex) {
         }
     }
 
-    public void MakeTheAcceptionThreadWakeUp() {
+    public void makeTheAcceptionThreadWakeUp() {
         try {
-            synchronized (this.call_me_when_ready_the_run_) {
-                this.call_me_when_ready_the_run_.notify();
+            synchronized (this.call_me_when_ready_the_run) {
+                this.call_me_when_ready_the_run.notify();
             }
-        } catch (Exception err) {
+        } catch (Exception ex) {
         }
     }
 
-    public void StartReadingProcess() {
-        this.is_reading_ = true;
-        String message_;
+    public void startReadingProcess() {
+        this.is_reading = true;
+        String message;
         try {
-            while ((((message_ = this.input_stream_.readLine()) != null)) && (is_reading_)) {
-                ProcessIncommingMessage(message_);
+            while ((((message = this.input_stream.readLine()) != null)) && (is_reading)) {
+                processIncommingMessage(message);
             }
-        } catch (Exception err) {
+        } catch (Exception ex) {
         }
     }
 
-    private void ProcessIncommingMessage(String message_) {
+    private void processIncommingMessage(String message) {
         try {
-            //TODO: replace with json
-            String header = message_.split("#")[0];
-            if (header.equals("message")) {
-                notifyObservers(message_.split("#")[1], this);
-            }
-        } catch (Exception err) {
+            notifyObservers(message, this);
+        } catch (Exception ex) {
         }
     }
 
-    public boolean SendMessage(String message) {
+    public boolean sendMessage(String message) {
         boolean success = true;
         try {
-            this.output_stream_.println(message);
-        } catch (Exception e) {
+            this.output_stream.println(message);
+        } catch (Exception ex) {
             success = false;
         }
         return success;

@@ -8,42 +8,42 @@ import java.util.ArrayList;
 
 public class SocketAcceptationThread extends Thread implements SocketObserver, ObservableSocket {
 
-    public boolean is_accepting_ = true;
-    ServerSocket serverSocket_;
-    ArrayList<SocketClientThread> replication_clients = new ArrayList<>();
+    private boolean is_accepting = true;
+    private ServerSocket server_socket;
+    private ArrayList<SocketClientThread> clients = new ArrayList<>();
     private ArrayList<SocketObserver> observers;
-    int port_;
+    private int port;
 
-    public SocketAcceptationThread(int Port) {
-        port_ = Port;
+    public SocketAcceptationThread(int port) {
+        this.port = port;
         observers = new ArrayList<>();
     }
 
     @Override
     public void run() {
         try {
-            serverSocket_ = new ServerSocket(port_);
-            while (is_accepting_) {
+            server_socket = new ServerSocket(port);
+            while (is_accepting) {
                 System.out.println("Server is accepting clients");
-                Socket incomming_socket = serverSocket_.accept();
-                SocketClientThread current_client = GetNotOcupatedClientThread();
+                Socket incomming_socket = server_socket.accept();
+                SocketClientThread current_client = getNotOcupatedClientThread();
                 if (current_client != null) {
-                    current_client.AssignSocket(incomming_socket);
-                    replication_clients.add(current_client);
+                    current_client.assignSocket(incomming_socket);
+                    clients.add(current_client);
                     current_client.addObserver(this);
                     System.out.println("Accept new client");
                 }
             }
-        } catch (Exception err) {
+        } catch (Exception ex) {
         }
     }
 
-    public SocketClientThread GetNotOcupatedClientThread() {
+    public SocketClientThread getNotOcupatedClientThread() {
         SocketClientThread free_client_thread = null;
         try {
             free_client_thread = new SocketClientThread();
             free_client_thread.start();
-        } catch (Exception err) {
+        } catch (Exception ex) {
         }
         MakeThisProcessWaitForAWhile(2000);
         return free_client_thread;
@@ -55,7 +55,7 @@ public class SocketAcceptationThread extends Thread implements SocketObserver, O
             synchronized (object) {
                 object.wait(delay);
             }
-        } catch (Exception err) {
+        } catch (Exception ex) {
         }
     }
 
