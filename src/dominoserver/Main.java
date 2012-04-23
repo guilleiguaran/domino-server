@@ -5,7 +5,7 @@ import dominoserver.model.DominoServer;
 public class Main {
     
     public Main() {
-        new DominoServer().start();
+        new DominoServer(4242).start();
     }
     
     public static void main(String[] args) {

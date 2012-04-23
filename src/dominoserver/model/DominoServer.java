@@ -7,16 +7,22 @@ import dominoserver.model.Exception.PlayerNotFoundExecption;
 
 public class DominoServer implements GameServer {
 
+    private int port = 4242;
+    
     private GameStatus status;
     private PlayerList players;
+    private SocketAcceptationThread socket;
         
-    public DominoServer() {
+    public DominoServer(int port) {
         status = GameStatus.STARTED;
         players = new PlayerList();
+        this.port = port;
+        socket = new SocketAcceptationThread(port);
     }
 
     @Override
     public void start() {
+        socket.start();
     }
 
     @Override

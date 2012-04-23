@@ -1,7 +1,7 @@
 package dominoserver.model;
 
-import dominoserver.controller.Observable;
-import dominoserver.controller.Observer;
+import dominoserver.controller.ObservableSocket;
+import dominoserver.controller.SocketObserver;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -9,7 +9,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class SocketClientThread extends Thread implements Observable {
+public class SocketClientThread extends Thread implements ObservableSocket {
 
     boolean is_ocupated_ = true;
     final Object mutex_ = new Object();
@@ -21,20 +21,10 @@ public class SocketClientThread extends Thread implements Observable {
     boolean is_reading_ = true;
     boolean waiting_ = false;
     boolean is_first_wake_up_ = true;
-    private ArrayList<Observer> observers;
-    private double longitude = 0;
-    private double latitude = 0;
+    private ArrayList<SocketObserver> observers;
 
     public SocketClientThread() {
         observers = new ArrayList<>();
-    }
-
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
     }
 
     public void AssignSocket(Socket current_socket) {
@@ -104,14 +94,10 @@ public class SocketClientThread extends Thread implements Observable {
 
     private void ProcessIncommingMessage(String message_) {
         try {
+            //TODO: replace with json
             String header = message_.split("#")[0];
-            if (header.equals("location")) {
-                latitude = Double.parseDouble(message_.split("#")[1].split("@")[0]);
-                longitude = Double.parseDouble(message_.split("#")[1].split("@")[1]);
-                System.out.println("location: lat. " + latitude + ", long. " + longitude);
-            }
             if (header.equals("message")) {
-                notifyObservers(this.current_socket_.getInetAddress().getHostAddress() + ": " + message_.split("#")[1]);
+                notifyObservers(message_.split("#")[1], this);
             }
         } catch (Exception err) {
         }
@@ -128,13 +114,13 @@ public class SocketClientThread extends Thread implements Observable {
     }
 
     @Override
-    public void addObserver(Observer o) {
+    public void addObserver(SocketObserver o) {
         observers.add(o);
     }
 
     @Override
-    public void notifyObservers(String message) {
-        for (Observer o : observers) {
+    public void notifyObservers(String message, SocketClientThread sender) {
+        for (SocketObserver o : observers) {
             o.notify(message, this);
         }
     }

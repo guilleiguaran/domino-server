@@ -1,17 +1,17 @@
 package dominoserver.model;
 
-import dominoserver.controller.Observable;
-import dominoserver.controller.Observer;
+import dominoserver.controller.ObservableSocket;
+import dominoserver.controller.SocketObserver;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class SocketAcceptationThread extends Thread implements Observer, Observable {
+public class SocketAcceptationThread extends Thread implements SocketObserver, ObservableSocket {
 
     public boolean is_accepting_ = true;
     ServerSocket serverSocket_;
     ArrayList<SocketClientThread> replication_clients = new ArrayList<>();
-    private ArrayList<Observer> observers;
+    private ArrayList<SocketObserver> observers;
     int port_;
 
     public SocketAcceptationThread(int Port) {
@@ -24,6 +24,7 @@ public class SocketAcceptationThread extends Thread implements Observer, Observa
         try {
             serverSocket_ = new ServerSocket(port_);
             while (is_accepting_) {
+                System.out.println("Server is accepting clients");
                 Socket incomming_socket = serverSocket_.accept();
                 SocketClientThread current_client = GetNotOcupatedClientThread();
                 if (current_client != null) {
@@ -58,27 +59,21 @@ public class SocketAcceptationThread extends Thread implements Observer, Observa
         }
     }
 
+    //This socket observes
     @Override
     public void notify(String message, Object sender) {
-        for (SocketClientThread c : replication_clients) {
-            if (!c.equals(sender)) {
-                SocketClientThread source = (SocketClientThread) sender;
-                //TODO: remove replication
-                c.SendMessage(message);
-            }
-        }
-        notifyObservers(message);
+        notifyObservers(message, (SocketClientThread) sender);
     }
 
     @Override
-    public void addObserver(Observer o) {
+    public void addObserver(SocketObserver o) {
         observers.add(o);
     }
 
     @Override
-    public void notifyObservers(String message) {
-        for (Observer o : observers) {
-            o.notify(message, this);
+    public void notifyObservers(String message, SocketClientThread sender) {
+        for (SocketObserver o : observers) {
+            o.notify(message, sender);
         }
     }
 
