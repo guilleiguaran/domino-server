@@ -1,11 +1,10 @@
 package dominoserver.model;
 
-import dominoserver.controller.GameServer;
 import dominoserver.model.Exception.DuplicatedUsernameException;
 import dominoserver.model.Exception.MaxCapacityExceededExeption;
 import dominoserver.model.Exception.PlayerNotFoundExecption;
 
-public class DominoServer implements GameServer {
+public class DominoServer {
     
     private GameStatus status;
     private PlayerList players;
@@ -17,29 +16,23 @@ public class DominoServer implements GameServer {
         socket = new SocketAcceptationThread(port);
     }
 
-    @Override
     public void start() {
         socket.start();
     }
 
-    @Override
     public void stop() {
     }
 
-    @Override
     public void pause() {
     }
 
-    @Override
     public void resume() {
     }
 
-    @Override
     public GameStatus getStatus() {
         return status;
     }
 
-    @Override
     public void acceptPlayer(Player player) throws MaxCapacityExceededExeption, DuplicatedUsernameException {
         if (players.size() < 4) {
             if (players.containsKey(player.getName())) {
@@ -50,7 +43,6 @@ public class DominoServer implements GameServer {
         }
     }
 
-    @Override
     public void removePlayer(Player player) throws PlayerNotFoundExecption {
         if (players.containsKey(player.getName())) {
             players.remove(player.getName());
@@ -59,7 +51,6 @@ public class DominoServer implements GameServer {
         }
     }
 
-    @Override
     public PlayerList getPlayers() {
         return players;
     }

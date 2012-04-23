@@ -1,7 +1,5 @@
 package dominoserver.model;
 
-import dominoserver.controller.ObservableSocket;
-import dominoserver.controller.SocketObserver;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;

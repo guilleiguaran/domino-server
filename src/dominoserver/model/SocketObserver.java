@@ -1,4 +1,4 @@
-package dominoserver.controller;
+package dominoserver.model;
 
 public interface SocketObserver {
 
