@@ -119,7 +119,7 @@ public class SocketClientThread extends Thread implements ObservableSocket {
     }
 
     @Override
-    public void notifyObservers(String message, SocketClientThread sender) {
+    public void notifyObservers(String message, Object sender) {
         for (SocketObserver o : observers) {
             o.notify(message, this);
         }
