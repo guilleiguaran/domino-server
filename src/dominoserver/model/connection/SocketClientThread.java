@@ -1,4 +1,4 @@
-package dominoserver.model;
+package dominoserver.model.connection;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

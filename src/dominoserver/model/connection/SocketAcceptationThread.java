@@ -1,4 +1,4 @@
-package dominoserver.model;
+package dominoserver.model.connection;
 
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -75,4 +75,8 @@ public class SocketAcceptationThread extends Thread implements SocketObserver, O
         }
     }
 
+    public ArrayList<SocketClientThread> getClients() {
+        return clients;
+    }
+    
 }

@@ -1,4 +1,4 @@
-package dominoserver.model;
+package dominoserver.model.logic;
 
 import java.util.HashMap;
 
