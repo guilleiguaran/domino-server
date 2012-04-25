@@ -57,10 +57,10 @@ public class SocketAcceptationThread extends Thread implements SocketObserver, O
         }
     }
 
-    //This socket observes
+    //This socket observes each of the SocketClientThread, once a message arrives, it propagates to the observers.
     @Override
-    public void notify(String message, Object sender) {
-        notifyObservers(message, (SocketClientThread) sender);
+    public void notify(Object data, Object sender) {
+        notifyObservers(data, (SocketClientThread) sender);
     }
 
     @Override
@@ -69,9 +69,9 @@ public class SocketAcceptationThread extends Thread implements SocketObserver, O
     }
 
     @Override
-    public void notifyObservers(String message, Object sender) {
+    public void notifyObservers(Object data, Object sender) {
         for (SocketObserver o : observers) {
-            o.notify(message, sender);
+            o.notify(data, sender);
         }
     }
 

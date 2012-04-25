@@ -1,5 +1,7 @@
 package dominoserver.model.connection;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -14,8 +16,8 @@ public class SocketClientThread extends Thread implements ObservableSocket {
     private Socket current_socket;
     private PrintWriter output_stream;
     private BufferedReader input_stream;
-    private boolean is_enabled = true;
-    private boolean is_reading = true;
+    private boolean enabled = true;
+    private boolean reading = true;
     private boolean waiting = false;
     private ArrayList<SocketObserver> observers;
 
@@ -42,7 +44,7 @@ public class SocketClientThread extends Thread implements ObservableSocket {
 
     @Override
     public void run() {
-        while (this.is_enabled) {
+        while (this.enabled) {
             this.startReadingProcess();
         }
     }
@@ -81,10 +83,10 @@ public class SocketClientThread extends Thread implements ObservableSocket {
     }
 
     public void startReadingProcess() {
-        this.is_reading = true;
+        this.reading = true;
         String message;
         try {
-            while ((((message = this.input_stream.readLine()) != null)) && (is_reading)) {
+            while ((((message = this.input_stream.readLine()) != null)) && (reading)) {
                 processIncommingMessage(message);
             }
         } catch (Exception ex) {
@@ -93,8 +95,12 @@ public class SocketClientThread extends Thread implements ObservableSocket {
 
     private void processIncommingMessage(String message) {
         try {
-            notifyObservers(message, this);
-        } catch (Exception ex) {
+            System.out.println("Received: " + message);
+            String pkg = message.split("#")[0].split("\\.")[0];
+            Class type = Class.forName(message.split("#")[0].replace(pkg, "dominoserver"));
+            Object data = new Gson().fromJson(message.split("#")[1], type);
+            notifyObservers(data, this);
+        } catch (ClassNotFoundException | JsonSyntaxException ex) {
         }
     }
 
@@ -114,9 +120,9 @@ public class SocketClientThread extends Thread implements ObservableSocket {
     }
 
     @Override
-    public void notifyObservers(String message, Object sender) {
+    public void notifyObservers(Object data, Object sender) {
         for (SocketObserver o : observers) {
-            o.notify(message, this);
+            o.notify(data, this);
         }
     }
 
