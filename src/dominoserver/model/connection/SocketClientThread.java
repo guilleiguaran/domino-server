@@ -104,10 +104,10 @@ public class SocketClientThread extends Thread implements ObservableSocket {
         }
     }
 
-    public boolean sendMessage(String message) {
+    public boolean sendMessage(Object data) {
         boolean success = true;
         try {
-            this.output_stream.println(message);
+           this.output_stream.println(data.getClass().getName() + "#" + new Gson().toJson(data));
         } catch (Exception ex) {
             success = false;
         }

@@ -79,4 +79,14 @@ public class SocketAcceptationThread extends Thread implements SocketObserver, O
         return clients;
     }
     
+    public void removeClient(SocketClientThread client) {
+        clients.remove(client);
+    }
+    
+    public void broadCast(Object data) {
+        for (SocketClientThread client : clients) {
+            client.sendMessage(data);
+        }
+    }
+    
 }

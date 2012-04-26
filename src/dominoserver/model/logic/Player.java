@@ -1,18 +1,25 @@
 package dominoserver.model.logic;
 
+import dominoserver.model.connection.SocketClientThread;
 import java.util.ArrayList;
 
 public class Player {
     
-    private String name;
+    private String username;
     private ArrayList<Tile> tiles;
-    
-    public String getName() {
-        return name;
+    private SocketClientThread socket;
+
+    public Player(String name) {
+        this.username = name;
+        tiles = new ArrayList<>();
+    }
+        
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String name) {
+        this.username = name;
     }
 
     public ArrayList<Tile> getTiles() {
@@ -30,5 +37,13 @@ public class Player {
     public Tile popTile(int index) {
         return tiles.remove(index);
     }
-        
+
+    public SocketClientThread getSocket() {
+        return socket;
+    }
+
+    public void setSocket(SocketClientThread socket) {
+        this.socket = socket;
+    }
+    
 }

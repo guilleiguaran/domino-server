@@ -2,7 +2,7 @@ package dominoserver.model;
 
 public enum GameStatus {
     
-    STARTED,
+    LOBBY,
     READY,
     ONGOING,
     PAUSED,
