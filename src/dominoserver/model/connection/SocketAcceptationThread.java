@@ -83,7 +83,7 @@ public class SocketAcceptationThread extends Thread implements SocketObserver, O
         clients.remove(client);
     }
     
-    public void broadCast(Object data) {
+    public void broadcast(Object data) {
         for (SocketClientThread client : clients) {
             client.sendMessage(data);
         }

@@ -21,7 +21,7 @@ public class DominoServer implements SocketObserver {
     private Map<Class, SocketDataHandler> handlers;
     
     private int num_players = 2;
-    public final String WELCOME_MESSAGE = "Jugador aceptado, bienvenido al servidor.";
+    public final String WELCOME_MESSAGE = "Bienvenido al servidor.";
     public final String READY_MESSAGE = "El juego está listo para empezar.";
             
     public DominoServer(int port) {
@@ -71,10 +71,6 @@ public class DominoServer implements SocketObserver {
             } else {
                 players.put(player.getUsername(), player);
                 System.out.println("Entra jugador " + player.getUsername());
-                if (players.size() == num_players) {
-                    System.out.println("Numero de jugadores suficiente para empezar");
-                    socket.broadCast(new ServerEvent(ServerEventType.GAME_READY, READY_MESSAGE));
-                }
             }
         } else {
             throw new MaxCapacityExceededExeption();
@@ -100,6 +96,14 @@ public class DominoServer implements SocketObserver {
 
     public SocketAcceptationThread getSocket() {
         return socket;
+    }
+    
+    public boolean hasEnoughPlayers() {
+        return players.size() == num_players;
+    }
+    
+    public void broadcast(Object data) {
+        socket.broadcast(data);
     }
     
 }
