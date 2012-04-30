@@ -2,8 +2,8 @@ package dominoserver.model.handlers;
 
 import dominoserver.model.DominoServer;
 import dominoserver.model.JoinRequest;
-import dominoserver.model.ServerEvent;
-import dominoserver.model.ServerEventType;
+import dominoserver.model.connection.ServerEvent;
+import dominoserver.model.connection.ServerEventType;
 import dominoserver.model.connection.SocketClientThread;
 import dominoserver.model.exception.DuplicatedUsernameException;
 import dominoserver.model.exception.MaxCapacityExceededExeption;

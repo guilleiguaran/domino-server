@@ -105,5 +105,17 @@ public class DominoServer implements SocketObserver {
     public void broadcast(Object data) {
         socket.broadcast(data);
     }
+
+    @Override
+    public void onConnectionSuccessful(Object sender) {
+    }
+
+    @Override
+    public void onConnectionFailed(Object sender) {
+    }
+
+    @Override
+    public void onConnectionLost(Object sender) {
+    }
     
 }

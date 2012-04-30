@@ -30,7 +30,9 @@ public class SocketClientThread extends Thread implements ObservableSocket {
             this.current_socket = current_socket;
             extractStreamsFromSocket();
             this.start();
+            onConnectionSuccessful(this);
         } catch (Exception ex) {
+            onConnectionFailed(this);
         }
     }
 
@@ -123,6 +125,27 @@ public class SocketClientThread extends Thread implements ObservableSocket {
     public void notifyObservers(Object data, Object sender) {
         for (SocketObserver o : observers) {
             o.notify(data, this);
+        }
+    }
+    
+    @Override
+    public void onConnectionSuccessful(Object sender) {
+        for (SocketObserver o : observers) {
+            o.onConnectionSuccessful(sender);
+        }
+    }
+
+    @Override
+    public void onConnectionFailed(Object sender) {
+        for (SocketObserver o : observers) {
+            o.onConnectionFailed(sender);
+        }
+    }
+
+    @Override
+    public void onConnectionLost(Object sender) {
+        for (SocketObserver o : observers) {
+            o.onConnectionLost(sender);
         }
     }
 

@@ -88,5 +88,17 @@ public class SocketAcceptationThread extends Thread implements SocketObserver, O
             client.sendMessage(data);
         }
     }
+
+    @Override
+    public void onConnectionSuccessful(Object sender) {
+    }
+
+    @Override
+    public void onConnectionFailed(Object sender) {
+    }
+
+    @Override
+    public void onConnectionLost(Object sender) {
+    }
     
 }
