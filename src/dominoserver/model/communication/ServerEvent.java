@@ -1,4 +1,4 @@
-package dominoserver.model.connection;
+package dominoserver.model.communication;
 
 public class ServerEvent {
     

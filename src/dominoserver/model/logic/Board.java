@@ -8,6 +8,8 @@ public class Board {
     public int height;
     private ArrayList<Tile> tiles;
     private int[][] hit_mask;
+    private TileHalf head;
+    private TileHalf tail;
 
     public Board(int width, int height) {
         this.width = width;
@@ -20,9 +22,31 @@ public class Board {
             }
         }
     }
+    
+    public boolean isEmpty() {
+        return tiles.isEmpty();
+    }
 
-    public void addTile(Tile tile) {
+    public void addTile(Tile tile, int place) {
         tiles.add(tile);
+        if (isEmpty()) {
+            head = tile.getHalf(0);
+            tail = tile.getHalf(1);
+        } else {
+            if (place == 0) {
+                if (head.matches(tile.getHalf(0))) {
+                    
+                } else if (head.matches(tile.getHalf(1))) {
+                    
+                }
+            } else {
+                if (tail.matches(tile.getHalf(0))) {
+                    
+                } else if (tail.matches(tile.getHalf(1))) {
+                    
+                }
+            }
+        }
         int x = (int) tile.getLocation().getX();
         int y = (int) tile.getLocation().getY();
         int w = 0, h = 0;

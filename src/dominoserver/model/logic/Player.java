@@ -8,6 +8,7 @@ public class Player {
     private String username;
     private ArrayList<Tile> tiles;
     private SocketClientThread socket;
+    private boolean playing = false;
 
     public Player(String name) {
         this.username = name;
@@ -45,5 +46,13 @@ public class Player {
     public void setSocket(SocketClientThread socket) {
         this.socket = socket;
     }
-    
+
+    public boolean isPlaying() {
+        return playing;
+    }
+
+    public void setPlaying(boolean playing) {
+        this.playing = playing;
+    }
+
 }
