@@ -1,5 +1,6 @@
 package dominoserver.model.logic;
 
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 
@@ -51,6 +52,18 @@ public class Tile {
 
     public void setOrientation(TileOrientation orientation) {
         this.orientation = orientation;
+    }
+    
+    public Dimension size() {
+        switch (orientation) {
+            case EAST:
+            case WEST:
+                return new Dimension(4, 2);
+            case NORTH:
+            case SOUTH:
+                return new Dimension(2, 4);
+            default: return null;
+        }
     }
     
 }

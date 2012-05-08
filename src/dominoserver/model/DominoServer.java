@@ -16,6 +16,8 @@ import dominoserver.model.logic.Board;
 import dominoserver.model.logic.Player;
 import dominoserver.model.logic.PlayerList;
 import dominoserver.model.logic.Tile;
+import dominoserver.model.logic.TileOrientation;
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +31,7 @@ public class DominoServer implements SocketObserver {
     private ArrayList<Tile> tiles;
     private SocketAcceptationThread socket;
     private Map<Class, SocketDataHandler> handlers;
-    private int num_players = 1;
+    private int num_players = 2;
     public final String WELCOME_MESSAGE = "Bienvenido al servidor";
     private int num_ready_players;
     private int current_player = -1;
@@ -39,7 +41,7 @@ public class DominoServer implements SocketObserver {
         status = GameStatus.LOBBY;
         players = new PlayerList();
         socket = new SocketAcceptationThread(port);
-        board = new Board(64, 40);
+        board = new Board(39, 22);
         tiles = new ArrayList<>();
         generateTiles();
         initializeDataHandlers();
@@ -121,21 +123,21 @@ public class DominoServer implements SocketObserver {
     public void assignTiles() {
         Random r = new Random();
         r.setSeed(System.currentTimeMillis());
-        int[] t = {11, 11, 9, 7};
         int p = 0;
-        int[][][] a = new int[num_players][t[num_players - 1]][2];
+        int[][][] a = new int[num_players][7][2];
         int dt[] = new int[num_players];
-        while (tiles.size() > 28 - t[num_players - 1] * num_players) {
+        while (tiles.size() > 28 - 7 * num_players) {
             int i = r.nextInt(tiles.size());
-            ((Player) players.values().toArray()[p]).addTile(tiles.get(i));
+            ((Player) players.values().toArray()[p]).addTile(tiles.get(i), dt[p]);
             a[p][dt[p]][0] = tiles.get(i).getHalf(0).getValue();
             a[p][dt[p]][1] = tiles.get(i).getHalf(1).getValue();
             dt[p] += 1;
             tiles.remove(i);
             p = (p + 1) % players.size();
         }
+        int[] indices = {0, 1, 2, 3, 4, 5, 6};
         for (int i = 0; i < num_players; i++) {
-            TileAssignment ta = new TileAssignment(a[i]);
+            TileAssignment ta = new TileAssignment(a[i], indices);
             System.out.println(i);
             ((Player) players.values().toArray()[i]).getSocket().sendMessage(ta);
         }
@@ -151,10 +153,10 @@ public class DominoServer implements SocketObserver {
     }
 
     public void setNextCurrentPlayer() {
-        Random r = new Random();
-        r.setSeed(System.currentTimeMillis());
         if (current_player == -1) {
             //TODO: the one with tile of form n:n with max(n) starts
+            Random r = new Random();
+            r.setSeed(System.currentTimeMillis());
             current_player = r.nextInt(num_players);
         } else {
             current_player = (current_player + 1) % players.size();
@@ -169,7 +171,26 @@ public class DominoServer implements SocketObserver {
     
     public void placeTile(Player source, PlayRequest request) {
         Tile tile = source.getTiles().get(request.getTile_id());
-        
+        tile.setLocation(new Point(request.getX(), request.getY()));
+        tile.setOrientation(request.getOrientation());
+        if (board.canPlace(tile)) {
+            source.popTile(request.getTile_id());
+            board.addTile(tile);
+            System.out.println(board);
+            source.getSocket().sendMessage(new ServerEvent(ServerEventType.TILE_ACCEPTED, "La ficha ha sido colocada correctamente"));
+            for (SocketClientThread sc : socket.getClients()) {
+                if (!sc.equals(source.getSocket())) {
+                    int[] t = new int[2];
+                    t[0] = tile.getHalf(0).getValue();
+                    t[1] = tile.getHalf(1).getValue();
+                    sc.sendMessage(new TilePlacement(t, request.getX(), request.getY(), request.getOrientation()));
+                }
+            }
+            setNextCurrentPlayer();
+        } else {
+            source.getSocket().sendMessage(new ServerEvent(ServerEventType.TILE_REJECTED, "No se puede colocar la ficha en ese lugar"));   
+        }
+        source.setWaiting(false);
     }
 
     public Board getBoard() {

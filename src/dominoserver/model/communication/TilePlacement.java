@@ -2,18 +2,18 @@ package dominoserver.model.communication;
 
 import dominoserver.model.logic.TileOrientation;
 
-public class PlayRequest {
-    
-    int tile_id;
-    TileOrientation orientation;
-    int x; 
-    int y;
+public class TilePlacement {
 
-    public PlayRequest(int tile_id, TileOrientation orientation, int x, int y) {
-        this.tile_id = tile_id;
-        this.orientation = orientation;
+    int[] tile;
+    int x;
+    int y;
+    TileOrientation orientation;
+
+    public TilePlacement(int[] tile, int x, int y, TileOrientation orientation) {
+        this.tile = tile;
         this.x = x;
         this.y = y;
+        this.orientation = orientation;
     }
 
     public TileOrientation getOrientation() {
@@ -24,12 +24,12 @@ public class PlayRequest {
         this.orientation = orientation;
     }
 
-    public int getTile_id() {
-        return tile_id;
+    public int[] getTile() {
+        return tile;
     }
 
-    public void setTile_id(int tile_id) {
-        this.tile_id = tile_id;
+    public void setTile(int[] tile) {
+        this.tile = tile;
     }
 
     public int getX() {
@@ -47,5 +47,5 @@ public class PlayRequest {
     public void setY(int y) {
         this.y = y;
     }
-    
+        
 }

@@ -21,10 +21,14 @@ public class PlayRequestHandler implements SocketDataHandler {
         try {
             PlayRequest request = (PlayRequest) o;
             Player source = server.getClients().get((SocketClientThread) sender);
-            if (source.getTiles().size() <= request.getTile_id()) {
-                throw new TileNotFoundException();
-            } else {
-                server.placeTile(source, request);
+            if (!source.isWaiting() && source.isPlaying()) {
+                source.setWaiting(true);
+                if (!source.getTiles().containsKey(request.getTile_id())) {
+                    source.setWaiting(false);
+                    throw new TileNotFoundException();
+                } else {
+                    server.placeTile(source, request);
+                }
             }
         } catch (TileNotFoundException ex) {
             ((SocketClientThread) sender).sendMessage(new ServerEvent(ServerEventType.TILE_REJECTED, ex.getMessage()));   

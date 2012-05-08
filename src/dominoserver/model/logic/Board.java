@@ -27,41 +27,11 @@ public class Board {
         return tiles.isEmpty();
     }
 
-    public void addTile(Tile tile, int place) {
+    public void addTile(Tile tile) {
         tiles.add(tile);
-        if (isEmpty()) {
-            head = tile.getHalf(0);
-            tail = tile.getHalf(1);
-        } else {
-            if (place == 0) {
-                if (head.matches(tile.getHalf(0))) {
-                    
-                } else if (head.matches(tile.getHalf(1))) {
-                    
-                }
-            } else {
-                if (tail.matches(tile.getHalf(0))) {
-                    
-                } else if (tail.matches(tile.getHalf(1))) {
-                    
-                }
-            }
-        }
         int x = (int) tile.getLocation().getX();
         int y = (int) tile.getLocation().getY();
-        int w = 0, h = 0;
-        switch (tile.getOrientation()) {
-            case EAST:
-            case WEST:
-                w = 4;
-                h = 2;
-                break;
-            case NORTH:
-            case SOUTH:
-                w = 2;
-                h = 4;
-                break;
-        }
+        int w = tile.size().width, h = tile.size().height;
         for (int i = x - w / 2; i <= x + w / 2 - 1; i++) {
             for (int j = y - h / 2; j <= y + h / 2 - 1; j++) {
                 hit_mask[i][j] = tiles.indexOf(tile);
@@ -72,24 +42,12 @@ public class Board {
     public boolean canPlace(Tile tile) {
         int x = (int) tile.getLocation().getX();
         int y = (int) tile.getLocation().getY();
-        int w = 0, h = 0;
-        switch (tile.getOrientation()) {
-            case EAST:
-            case WEST:
-                w = 4;
-                h = 2;
-                break;
-            case NORTH:
-            case SOUTH:
-                w = 2;
-                h = 4;
-                break;
-        }
-        if ((x - w < 0) || (x + w > width) || (y - h < 0) || (y + h > height)) {
+        int w = tile.size().width, h = tile.size().height;
+        if ((x - w / 2 < 0) || (x + w / 2 > width) || (y - h / 2 < 0) || (y + h / 2 > height)) {
             return false;
         }
-        for (int i = x - w / 2; i <= x + w / 2; i++) {
-            for (int j = y - h / 2; j <= y + h / 2; j++) {
+        for (int i = x - w / 2; i <= x + w / 2 - 1; i++) {
+            for (int j = y - h / 2; j <= y + h / 2 - 1; j++) {
                 if (hit_mask[i][j] != -1) {
                     return false;
                 }
