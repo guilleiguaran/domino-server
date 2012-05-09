@@ -9,6 +9,7 @@ public enum ServerEventType {
     CAN_PLAY,
     CANT_PLAY,
     TILE_ACCEPTED,
-    TILE_REJECTED
+    TILE_REJECTED,
+    PLAYER_PASSES
     
 }

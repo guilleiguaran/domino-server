@@ -3,7 +3,7 @@ package dominoserver.model.exception;
 public class MaxCapacityExceededExeption extends Exception {
 
     public MaxCapacityExceededExeption() {
-        super("The game cannot contain more than 4 players.");
+        super("Juego lleno");
     }
     
 }

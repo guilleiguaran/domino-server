@@ -2,47 +2,46 @@ package dominoserver.model.logic;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.geom.Point2D;
 
 public class Tile {
     
-    private TileHalf[] halves;
-    private Point2D location;
+    private int[] halves;
+    private Point location;
     private TileOrientation orientation;
 
     public Tile(int s0, int s1) {
-        halves = new TileHalf[2];
-        halves[0] = new TileHalf(s0, null, this);
-        halves[1] = new TileHalf(s1, null, this);
+        halves = new int[2];
+        halves[0] = s0;
+        halves[1] = s1;
         location = new Point();
         orientation = TileOrientation.NORTH;
     }
    
     public boolean has(int n) {
-        return (halves[0].getValue() == n) || (halves[1].getValue() == n);
+        return (halves[0] == n) || (halves[1] == n);
     }
     
     public boolean isDouble() {
-        return (halves[0].getValue() == halves[1].getValue());
+        return (halves[0] == halves[1]);
     }
     
-    public TileHalf getHalf(int n) {
+    public int getHalf(int n) {
         return halves[n];
     }
 
-    public TileHalf[] getHalves() {
+    public int[] getHalves() {
         return halves;
     }
 
-    public void setHalves(TileHalf[] halves) {
+    public void setHalves(int[] halves) {
         this.halves = halves;
     }
 
-    public Point2D getLocation() {
+    public Point getLocation() {
         return location;
     }
 
-    public void setLocation(Point2D location) {
+    public void setLocation(Point location) {
         this.location = location;
     }
 

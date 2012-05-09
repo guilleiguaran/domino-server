@@ -8,15 +8,11 @@ import dominoserver.model.connection.SocketObserver;
 import dominoserver.model.exception.DuplicatedUsernameException;
 import dominoserver.model.exception.MaxCapacityExceededExeption;
 import dominoserver.model.exception.PlayerNotFoundExecption;
-import dominoserver.model.handlers.ClientEventHandler;
-import dominoserver.model.handlers.JoinRequestHandler;
-import dominoserver.model.handlers.PlayRequestHandler;
-import dominoserver.model.handlers.SocketDataHandler;
+import dominoserver.model.handlers.*;
 import dominoserver.model.logic.Board;
 import dominoserver.model.logic.Player;
 import dominoserver.model.logic.PlayerList;
 import dominoserver.model.logic.Tile;
-import dominoserver.model.logic.TileOrientation;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,13 +27,13 @@ public class DominoServer implements SocketObserver {
     private ArrayList<Tile> tiles;
     private SocketAcceptationThread socket;
     private Map<Class, SocketDataHandler> handlers;
-    private int num_players = 2;
+    private int num_players;
     public final String WELCOME_MESSAGE = "Bienvenido al servidor";
     private int num_ready_players;
     private int current_player = -1;
     private Map<SocketClientThread, Player> clients;
 
-    public DominoServer(int port) {
+    public DominoServer(int port, int num_players) {
         status = GameStatus.LOBBY;
         players = new PlayerList();
         socket = new SocketAcceptationThread(port);
@@ -47,6 +43,7 @@ public class DominoServer implements SocketObserver {
         initializeDataHandlers();
         num_ready_players = 0;
         clients = new HashMap<>();
+        this.num_players = num_players;
     }
 
     public Map<SocketClientThread, Player> getClients() {
@@ -63,6 +60,7 @@ public class DominoServer implements SocketObserver {
         handlers.put(JoinRequest.class, new JoinRequestHandler(this));
         handlers.put(ClientEvent.class, new ClientEventHandler(this));
         handlers.put(PlayRequest.class, new PlayRequestHandler(this));
+        handlers.put(PassRequest.class, new PassRequestHandler(this));
     }
 
     public void stop() {
@@ -129,8 +127,7 @@ public class DominoServer implements SocketObserver {
         while (tiles.size() > 28 - 7 * num_players) {
             int i = r.nextInt(tiles.size());
             ((Player) players.values().toArray()[p]).addTile(tiles.get(i), dt[p]);
-            a[p][dt[p]][0] = tiles.get(i).getHalf(0).getValue();
-            a[p][dt[p]][1] = tiles.get(i).getHalf(1).getValue();
+            a[p][dt[p]] = tiles.get(i).getHalves();
             dt[p] += 1;
             tiles.remove(i);
             p = (p + 1) % players.size();
@@ -180,10 +177,7 @@ public class DominoServer implements SocketObserver {
             source.getSocket().sendMessage(new ServerEvent(ServerEventType.TILE_ACCEPTED, "La ficha ha sido colocada correctamente"));
             for (SocketClientThread sc : socket.getClients()) {
                 if (!sc.equals(source.getSocket())) {
-                    int[] t = new int[2];
-                    t[0] = tile.getHalf(0).getValue();
-                    t[1] = tile.getHalf(1).getValue();
-                    sc.sendMessage(new TilePlacement(t, request.getX(), request.getY(), request.getOrientation()));
+                    sc.sendMessage(new TilePlacement(tile.getHalves(), request.getX(), request.getY(), request.getOrientation()));
                 }
             }
             setNextCurrentPlayer();
