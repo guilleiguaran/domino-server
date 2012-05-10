@@ -1,8 +1,6 @@
 //TODO: IA
 //TODO: unhandled connection errors
-//TODO: more stable display
 //TODO: connection pipeline
-//TODO: notify boxes (client)
 
 package dominoserver.view;
 
@@ -15,7 +13,7 @@ import javax.swing.UIManager;
 
 public class MainFrame extends javax.swing.JFrame implements ServerFrame {
 
-    DominoServer server;
+    private DominoServer server;
     
     public MainFrame() {
         try {
@@ -24,6 +22,7 @@ public class MainFrame extends javax.swing.JFrame implements ServerFrame {
         }
         initComponents();
     }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
