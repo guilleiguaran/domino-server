@@ -44,7 +44,7 @@ public class MainFrame extends javax.swing.JFrame implements ServerFrame {
         jLabel3.setFont(new java.awt.Font("Segoe UI Light", 0, 36)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(74, 183, 199));
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("Servidor Dominó");
+        jLabel3.setText("Servidor Domino");
         jLabel3.setDoubleBuffered(true);
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
